@@ -1,6 +1,6 @@
 import mysql.connector as m, time as t, credentials as c, datetime as dt
 
-con = m.connect(host=f'{c.host()}', user=f'{c.user()}', password=f'{c.password()}', charset='utf8', database='bank')
+con = m.connect(host='localhost', user='user', password='root', charset='utf8', database='bank')
 cur=con.cursor()
 
 def getName(id):
