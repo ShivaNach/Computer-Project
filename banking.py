@@ -32,14 +32,14 @@ def deposit(userId, amt):
     
     con.commit()
     t.sleep(1.0)
-    print(f"Amount of ₹{amt} has been deposited into your account.")
+    print(f"Amount of ₹{amt} has been deposited into your account.\n")
 
 
 def withdraw(userId, amt):
     bal = checkBalance(userId)
     if amt > bal: 
         t.sleep(0.5)
-        print("Insufficient funds.")
+        print("Insufficient funds.\n")
         return None
     cur.execute(f"UPDATE customer SET bal = bal - {amt} WHERE user_id = '{userId}'")
     cur.execute(f"SELECT max(t_id) FROM transact")
@@ -53,20 +53,20 @@ def withdraw(userId, amt):
 
     con.commit() 
     t.sleep(0.5)
-    print(f"Amount of ₹{amt} has been withdrawn from your account.")
+    print(f"Amount of ₹{amt} has been withdrawn from your account.\n")
 
 def makePayment(userId, amt, recipientId):
     cur.execute(f"SELECT count(user_id) FROM customer WHERE user_id = '{recipientId}'")
     res = cur.fetchone()
     if res[0] == 0:
         t.sleep(0.5)
-        print("Transaction failed, User ",userId,"not found...")
+        print("Transaction failed, User ",userId,"not found...\n")
         return None
     else:
         bal = checkBalance(userId)
         if amt > bal: 
             t.sleep(0.5)
-            print("Insufficient funds.")
+            print("Insufficient funds.\n")
             return None
         cur.execute(f"UPDATE customer SET bal = bal - {amt} WHERE user_id = '{userId}'")
         cur.execute(f"UPDATE customer SET bal = bal + {amt} WHERE user_id = '{recipientId}'")
@@ -83,7 +83,7 @@ def makePayment(userId, amt, recipientId):
         
         con.commit() 
         t.sleep(0.5)
-        print(f"Amount of ₹{amt} has been successfully transferred to {getName(recipientId)}")
+        print(f"Amount of ₹{amt} has been successfully transferred to {getName(recipientId)}\n")
 
 def viewStatement(userId, startDate='0000-01-01', endDate=t.strftime('%Y-%m-%d')):
     try:
@@ -91,14 +91,14 @@ def viewStatement(userId, startDate='0000-01-01', endDate=t.strftime('%Y-%m-%d')
         dt.datetime.strptime(endDate, "%Y-%m-%d")
     except ValueError:
         t.sleep(0.5)
-        print("Improper date formatting, try again.")
+        print("Improper date formatting, try again.\n")
         return None
     
     cur.execute(f"SELECT * FROM transact WHERE user_id={userId} and tdate BETWEEN '{startDate}' and '{endDate}'")
     statements = cur.fetchall()
     if not statements: 
         t.sleep(0.5)
-        print("No transaction has taken place under this account.")
+        print("No transaction has taken place under this account.\n")
         return None
     
     print("="*75)
