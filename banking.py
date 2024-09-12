@@ -1,6 +1,6 @@
-import mysql.connector as m, time as t, credentials as c, datetime as dt
+import mysql.connector as m, time as t, datetime as dt
 
-con = m.connect(host=f'{c.host()}', user=f'{c.user()}', password=f'{c.password()}', charset='utf8', database='bank')
+con = m.connect(host='localhost', user='root', password='root', charset='utf8', database='bank')
 cur=con.cursor()
 
 def getName(id):
@@ -31,13 +31,15 @@ def deposit(userId, amt):
     cur.execute(f"INSERT INTO transact VALUES({newTransacId}, {userId}, '{curr_date}', '{curr_time}',{amt}, null, {userId})")
     
     con.commit()
-    print(f"Amount of ₹{amt} has been deposited into your account.")
+    t.sleep(1.0)
+    print(f"Amount of ₹{amt} has been deposited into your account.\n")
 
 
 def withdraw(userId, amt):
     bal = checkBalance(userId)
     if amt > bal: 
-        print("Insufficient funds.")
+        t.sleep(0.5)
+        print("Insufficient funds.\n")
         return None
     cur.execute(f"UPDATE customer SET bal = bal - {amt} WHERE user_id = '{userId}'")
     cur.execute(f"SELECT max(t_id) FROM transact")
@@ -50,18 +52,21 @@ def withdraw(userId, amt):
     cur.execute(f"INSERT INTO transact VALUES({newTransacId}, {userId}, '{curr_date}', '{curr_time}', null, {amt}, {userId})")
 
     con.commit() 
-    print(f"Amount of ₹{amt} has been withdrawn from your account.")
+    t.sleep(0.5)
+    print(f"Amount of ₹{amt} has been withdrawn from your account.\n")
 
 def makePayment(userId, amt, recipientId):
     cur.execute(f"SELECT count(user_id) FROM customer WHERE user_id = '{recipientId}'")
     res = cur.fetchone()
     if res[0] == 0:
-        print("Transaction failed, no user exists by that id.")
+        t.sleep(0.5)
+        print("Transaction failed, User ",userId,"not found...\n")
         return None
     else:
         bal = checkBalance(userId)
         if amt > bal: 
-            print("Insufficient funds.")
+            t.sleep(0.5)
+            print("Insufficient funds.\n")
             return None
         cur.execute(f"UPDATE customer SET bal = bal - {amt} WHERE user_id = '{userId}'")
         cur.execute(f"UPDATE customer SET bal = bal + {amt} WHERE user_id = '{recipientId}'")
@@ -77,20 +82,23 @@ def makePayment(userId, amt, recipientId):
         cur.execute(f"INSERT INTO transact VALUES({newTransacId}, {recipientId}, '{curr_date}', '{curr_time}', {amt},null, '{userId}')")
         
         con.commit() 
-        print(f"Amount of ₹{amt} has been successfully transferred to {getName(recipientId)}")
+        t.sleep(0.5)
+        print(f"Amount of ₹{amt} has been successfully transferred to {getName(recipientId)}\n")
 
-def viewStatement(userId, startDate='0000-01-01', endDate=t.strftime('%Y-%m-%d')):
+def viewStatement(userId, startDate='0001-01-01', endDate=t.strftime('%Y-%m-%d')):
     try:
         dt.datetime.strptime(startDate, "%Y-%m-%d")
         dt.datetime.strptime(endDate, "%Y-%m-%d")
     except ValueError:
-        print("Improper date formatting, try again.")
+        t.sleep(0.5)
+        print("Improper date formatting, try again.\n")
         return None
     
     cur.execute(f"SELECT * FROM transact WHERE user_id={userId} and tdate BETWEEN '{startDate}' and '{endDate}'")
     statements = cur.fetchall()
     if not statements: 
-        print("No transaction has taken place under this account.")
+        t.sleep(0.5)
+        print("No transaction has taken place under this account.\n")
         return None
     
     print("="*75)
@@ -115,45 +123,64 @@ def viewStatement(userId, startDate='0000-01-01', endDate=t.strftime('%Y-%m-%d')
 
 
 print("="*30)
+t.sleep(0.5)
 print("Wecome user to the Chettinad Bank!")
 print("="*30)
+t.sleep(0.5)
 print("Please login to use our services.")
 while True:
+    t.sleep(0.5)
     userId = input("Enter user id:")
     password = input("Enter password:")
+    t.sleep(0.5)
+    print("Authorizing...Please Wait...")
+    t.sleep(3.0)
     if auth(userId, password) == "error":
         print("Error! The user_id or passcode provided is incorrect")
-        q = input("Do you want to try again? [press n to exit] (y/n)")
-        if q != 'y': break
+        q = input("Do you want to try again? (Y/N)")
+        t.sleep(0.5)
+        if q not in 'Yy':
+            t.sleep(0.5)
+            print('Thank you !!') 
+            break
     else:
-        print("You've successfully logged in!")
-        print(f"Welcome {getName(userId)}!")
-        print("~"*10)
-        print("List of services: \n1. Withdraw cash \n2. Deposit Cash \n3. Check Balance \n4. View Statement \n5. Fund Transfer (recipient must belong to the same bank)\n6. Log out\n7. Exit")
-        print("~"*10)
+        print("\nYou've successfully logged in!")
+        print(f"Welcome {getName(userId)}!\n")
+        print("~"*50)
+        t.sleep(1.0)
+        print("List of services: \n")
+        for i in ['1. Withdraw cash','2. Deposit Cash','3. Check Balance','4. View Statement','5. Fund Transfer','6. Log out','7. Exit']:
+            t.sleep(0.5)
+            print(i)
+        print("~"*50)
         while True:
-            try: choice = int(input("Choose the number to select service (press 8 to view menu):"))
+            try: choice = int(input("Enter the number to select service (enter 8 to view menu):"))
             except ValueError: 
-                print("Invalid input, try again.")
+                print("Invalid input, try again.\n")
                 continue
             match choice:
                 case 1:
-                    try: amt = int(input("Enter the amount to be withdrawn: "))
+                    try: amt = int(input("Enter Withdrawal Amount: ₹"))
                     except ValueError: 
-                        print("Invalid input, try again.")
+                        print("Invalid input, try again.\n")
                         continue
+                    t.sleep(0.5)
                     withdraw(userId, amt)
                 case 2:
-                    try: amt = int(input("Enter the amount to be deposited: "))
+                    try: amt = int(input("Enter Deposition Amount: ₹"))
                     except ValueError: 
-                        print("Invalid input, try again.")
+                        print("Invalid input, try again...\n")
                         continue
+                    t.sleep(0.5)
                     deposit(userId, amt)
                 case 3:
-                    print(f"Your current balance is ₹{checkBalance(userId)} only")
+                    t.sleep(0.5)
+                    print(f"Your current balance is ₹{checkBalance(userId)} /-\n")
                 case 4:
-                    startdate = input("Enter the start date (yyyy-mm-dd) [optional, enter to skip]: ")
-                    enddate = input("Enter end date (yyyy-mm-dd) [optional, enter to skip]: ")
+                    t.sleep(0.5)
+                    startdate = input("Enter the start date (yyyy-mm-dd) [press enter to skip]: ")
+                    enddate = input("Enter end date (yyyy-mm-dd) [press enter to skip]: ")
+                    t.sleep(0.5)
                     if startdate == "" and enddate == "":
                         viewStatement(userId)
                     elif startdate == "":
@@ -164,23 +191,34 @@ while True:
                         viewStatement(userId, startdate, enddate)
 
                 case 5:
+                    t.sleep(0.5)
                     try:
                         amt = int(input("Enter the amount to be transferred: "))
                         recipient = int(input("Enter the recipient's id: "))
                     except ValueError:
-                        print("Invalid input, try again.")
+                        print("Invalid input, try again.\n")
                         continue
+                    t.sleep(0.5)
                     makePayment(userId, amt, recipient)
                 case 6:
+                    t.sleep(0.5)
                     print("You've successfully logged out!")
                     break
                 case 7:
+                    print("Exiting.....")
+                    t.sleep(3.0)
                     break
                 case 8:
-                    print("~"*10)
-                    print("List of services: \n1. Withdraw cash \n2. Deposit Cash \n3. Check Balance \n4. View Statement \n5. Fund Transfer (recipient must belong to the same bank)\n6. Log out\n7. Exit")
-                    print("~"*10)
+                    print("~"*50)
+                    for i in ['1. Withdraw cash','2. Deposit Cash','3. Check Balance','4. View Statement','5. Fund Transfer','6. Log out','7. Exit']:
+                        t.sleep(0.5)
+                        print(i)            
+                    print("~"*50)
                 case _:
-                    print("Invalid choice selected...Try again")
+                    t.sleep(0.5)
+                    print("Invalid choice selected...Try again\n")
 
-        if choice == 7: break
+        if choice == 7:
+            print("Exiting.....")
+            t.sleep(3.0)
+            break
