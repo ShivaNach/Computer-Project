@@ -156,26 +156,26 @@ while True:
         while True:
             try: choice = int(input("Enter the number to select service (enter 8 to view menu):"))
             except ValueError: 
-                print("Invalid input, try again.")
+                print("Invalid input, try again.\n")
                 continue
             match choice:
                 case 1:
                     try: amt = int(input("Enter Withdrawal Amount: ₹"))
                     except ValueError: 
-                        print("Invalid input, try again.")
+                        print("Invalid input, try again.\n")
                         continue
                     t.sleep(0.5)
                     withdraw(userId, amt)
                 case 2:
                     try: amt = int(input("Enter Deposition Amount: ₹"))
                     except ValueError: 
-                        print("Invalid input, try again...")
+                        print("Invalid input, try again...\n")
                         continue
                     t.sleep(0.5)
                     deposit(userId, amt)
                 case 3:
                     t.sleep(0.5)
-                    print(f"Your current balance is ₹{checkBalance(userId)} /-")
+                    print(f"Your current balance is ₹{checkBalance(userId)} /-\n")
                 case 4:
                     t.sleep(0.5)
                     startdate = input("Enter the start date (yyyy-mm-dd) [press enter to skip]: ")
@@ -196,7 +196,7 @@ while True:
                         amt = int(input("Enter the amount to be transferred: "))
                         recipient = int(input("Enter the recipient's id: "))
                     except ValueError:
-                        print("Invalid input, try again.")
+                        print("Invalid input, try again.\n")
                         continue
                     t.sleep(0.5)
                     makePayment(userId, amt, recipient)
@@ -216,7 +216,7 @@ while True:
                     print("~"*50)
                 case _:
                     t.sleep(0.5)
-                    print("Invalid choice selected...Try again")
+                    print("Invalid choice selected...Try again\n")
 
         if choice == 7:
             print("Exiting.....")
