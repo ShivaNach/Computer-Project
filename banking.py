@@ -85,7 +85,7 @@ def makePayment(userId, amt, recipientId):
         t.sleep(0.5)
         print(f"Amount of ₹{amt} has been successfully transferred to {getName(recipientId)}\n")
 
-def viewStatement(userId, startDate='0000-01-01', endDate=t.strftime('%Y-%m-%d')):
+def viewStatement(userId, startDate='0001-01-01', endDate=t.strftime('%Y-%m-%d')):
     try:
         dt.datetime.strptime(startDate, "%Y-%m-%d")
         dt.datetime.strptime(endDate, "%Y-%m-%d")
@@ -150,7 +150,7 @@ while True:
         t.sleep(1.0)
         print("List of services: \n")
         for i in ['1. Withdraw cash','2. Deposit Cash','3. Check Balance','4. View Statement','5. Fund Transfer','6. Log out','7. Exit']:
-            t.sleep(1.0)
+            t.sleep(0.5)
             print(i)
         print("~"*50)
         while True:
