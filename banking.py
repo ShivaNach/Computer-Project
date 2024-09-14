@@ -229,6 +229,4 @@ while True:
                     print("Invalid choice selected...Try again\n")
 
         if choice == 7:
-            print("Exiting.....")
-            t.sleep(3.0)
             break
