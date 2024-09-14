@@ -1,6 +1,6 @@
 import mysql.connector as m, time as t, datetime as dt
 
-con = m.connect(host='localhost', user='root', password='root', charset='utf8', database='bank')
+con = m.connect(host='localhost', user='root', password='root', charset='utf8')
 cur=con.cursor()
 
 def getName(id):
@@ -121,11 +121,26 @@ def viewStatement(userId, startDate='0001-01-01', endDate=t.strftime('%Y-%m-%d')
     print("="*75)
 
 
+#__Driver code__
+with open('bankdef.sql', 'r') as bd:
+    bankdef = bd.read()
+    queries = bankdef.split(';')
+    for query in queries:
+        if query.strip():
+            cur.execute(query)
+    con.commit()
+with open('data.sql', 'r') as dat:
+    dataSQL = dat.read()
+    queries = dataSQL.split(';')
+    for query in queries:
+        if query.strip():
+            cur.execute(query)  
+    con.commit()
 
-print("="*30)
+print("="*50)
 t.sleep(0.5)
-print("Wecome user to the Chettinad Bank!")
-print("="*30)
+print("Welcome user to the Chettinad Bank!")
+print("="*50)
 t.sleep(0.5)
 print("Please login to use our services.")
 while True:
@@ -141,17 +156,14 @@ while True:
         t.sleep(0.5)
         if q not in 'Yy':
             t.sleep(0.5)
-            print('Thank you !!') 
+            print('Thank you!!') 
             break
     else:
         print("\nYou've successfully logged in!")
         print(f"Welcome {getName(userId)}!\n")
         print("~"*50)
-        t.sleep(1.0)
         print("List of services: \n")
-        for i in ['1. Withdraw cash','2. Deposit Cash','3. Check Balance','4. View Statement','5. Fund Transfer','6. Log out','7. Exit']:
-            t.sleep(0.5)
-            print(i)
+        print('1. Withdraw cash','2. Deposit Cash','3. Check Balance','4. View Statement','5. Fund Transfer','6. Log out','7. Exit', sep='\n')
         print("~"*50)
         while True:
             try: choice = int(input("Enter the number to select service (enter 8 to view menu):"))
@@ -210,9 +222,7 @@ while True:
                     break
                 case 8:
                     print("~"*50)
-                    for i in ['1. Withdraw cash','2. Deposit Cash','3. Check Balance','4. View Statement','5. Fund Transfer','6. Log out','7. Exit']:
-                        t.sleep(0.5)
-                        print(i)            
+                    print('1. Withdraw cash','2. Deposit Cash','3. Check Balance','4. View Statement','5. Fund Transfer','6. Log out','7. Exit', sep='\n')           
                     print("~"*50)
                 case _:
                     t.sleep(0.5)
